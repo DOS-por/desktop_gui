@@ -107,10 +107,10 @@ int main(int, char**)
         draw_list->AddRectFilledMultiColor(
             ImVec2(0, 0),
             ImVec2((float)display_w, (float)display_h),
-            IM_COL32(15, 15, 25, 255),   // Top-left
-            IM_COL32(30, 15, 40, 255),   // Top-right
-            IM_COL32(10, 10, 15, 255),   // Bottom-right
-            IM_COL32(20, 10, 30, 255)    // Bottom-left
+            IM_COL32(25, 40, 75, 255),   // Top-left 
+            IM_COL32(35, 55, 95, 255),   // Top-right 
+            IM_COL32(15, 25, 45, 255),   // Bottom-right
+            IM_COL32(20, 32, 60, 255)    // Bottom-left 
         );
 
         // Draw center logo of the desktop wallpaper
@@ -147,13 +147,17 @@ int main(int, char**)
 		tm localTime_s;
 		localtime_s(&localTime_s, &now);    
 
-		char timeBuffer[9]; // HH:MM:SS
-		strftime(timeBuffer, sizeof(timeBuffer), "%H:%M:%S", &localTime_s);
+		char timeBuffer[128]; // HH:MM:SS
+		strftime(timeBuffer, sizeof(timeBuffer), "%b %d, %Y | %I:%M:%S %p", &localTime_s);
 
 		// Displaying Real Time Clock on the desktop wallpaper
-		ImGui::SetWindowPos(ImVec2(display_w - 150.0f, 20.0f), ImGuiCond_Always);
+		ImGui::SetNextWindowPos(ImVec2((float)display_w / 2.0f + 600.0f, 10.0f), ImGuiCond_Always);
 		ImGui::Begin("Real Time Clock", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove);
-		ImGui::Text("%s", timeBuffer);
+		
+		ImGui::SetWindowFontScale(1.5f); // Set font scale for the clock display
+		ImGui::SetCursorPosX(1.0f); // Align text to the center of the window  
+                
+        ImGui::Text("%s", timeBuffer);
 		ImGui::End();
 
         //--------------------------------------------------------------------------------
