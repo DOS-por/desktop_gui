@@ -3,6 +3,7 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include <stdio.h>
+#include <fstream>
 #define GL_SILENCE_DEPRECATION
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #include <GLES2/gl2.h>
@@ -18,6 +19,15 @@ using namespace std;
 static void glfw_error_callback(int error, const char* description)
 {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
+}
+
+static std::string ReadFileToString(const char* path)
+{
+    std::ifstream ifs(path, std::ios::in | std::ios::binary);
+    if (!ifs) return std::string();
+    std::ostringstream ss;
+    ss << ifs.rdbuf();
+    return ss.str();
 }
 
 int main(int, char**)
@@ -79,6 +89,14 @@ int main(int, char**)
     static bool showApp1 = false;
     static bool showApp2 = false;
     static bool showTaskManager = false;
+    // App-specific UI state
+    static int app1_selected_index = 0; // selected file/folder in File Manager
+    static const char* app1_items[] = { "Documents", "Pictures", "Music", "Videos", "Downloads", "Homework", "notes.txt", "todo.md" };
+    static int app1_items_count = IM_ARRAYSIZE(app1_items);
+    static char app2_address[256] = "https://bee_movie_script.com"; // fake browser address bar
+    static int app2_history_index = 0;
+    // bee movie script file load
+    static std::string gist_content = ReadFileToString("bee_movie_script.txt");
 
     // Main loop
 #ifdef __EMSCRIPTEN__
@@ -253,16 +271,70 @@ int main(int, char**)
 
         // Floating windows opened from taskbar buttons
         if (showApp1) {
-            ImGui::SetNextWindowSize(ImVec2(360, 200), ImGuiCond_Appearing);
-            ImGui::Begin("App 1 - Info", &showApp1, ImGuiWindowFlags_NoCollapse);
-            ImGui::TextWrapped("Placeholder information for App 1.");
+            ImGui::SetNextWindowSize(ImVec2(700, 400), ImGuiCond_Appearing);
+            ImGui::Begin("File Manager", &showApp1, ImGuiWindowFlags_NoCollapse);
+
+            // two-pane layout - left = folders/files, right = details
+            ImGui::BeginChild("##left_pane", ImVec2(220, 0), true);
+            ImGui::Text("Folders");
+            ImGui::Separator();
+            for (int i = 0; i < app1_items_count; ++i) {
+                bool selected = (i == app1_selected_index);
+                if (ImGui::Selectable(app1_items[i], selected)) {
+                    app1_selected_index = i;
+                }
+            }
+            ImGui::EndChild();
+
+            ImGui::SameLine();
+
+            ImGui::BeginChild("##right_pane", ImVec2(0, 0), true);
+            ImGui::Text("Details");
+            ImGui::Separator();
+            if (app1_selected_index >= 0 && app1_selected_index < app1_items_count) {
+                const char* name = app1_items[app1_selected_index];
+                ImGui::Text("Name: %s", name);
+                ImGui::Text("Type: %s", (strstr(name, ".") ? "File" : "Folder"));
+                ImGui::Text("Size: %s", (strstr(name, ".") ? "4.5 KB" : "—"));
+                ImGui::Dummy(ImVec2(0, 8));
+                ImGui::TextWrapped("This is placeholder content for the File Manager. Selecting items shows basic metadata. Implement real filesystem access to populate this list.");
+            }
+            ImGui::EndChild();
+
             ImGui::End();
         }
 
         if (showApp2) {
-            ImGui::SetNextWindowSize(ImVec2(360, 200), ImGuiCond_Appearing);
-            ImGui::Begin("App 2 - Info", &showApp2, ImGuiWindowFlags_NoCollapse);
-            ImGui::TextWrapped("Placeholder information for App 2.");
+            ImGui::SetNextWindowSize(ImVec2(900, 600), ImGuiCond_Appearing);
+            ImGui::Begin("Fake Browser", &showApp2, ImGuiWindowFlags_NoCollapse);
+
+            // simple toolbar - back / forward (not functional) + address bar
+            ImGui::BeginChild("##browser_toolbar", ImVec2(0, 36), false);
+            if (ImGui::Button("<-")) { /* back placeholder */ }
+            ImGui::SameLine();
+            if (ImGui::Button("->")) { /* forward placeholder */ }
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(-1);
+            ImGui::InputText("##address", app2_address, IM_ARRAYSIZE(app2_address));
+            ImGui::SameLine();
+            if (ImGui::Button("Go")) {
+                // pretend to navigate
+                app2_history_index++;
+            }
+            ImGui::EndChild();
+
+            ImGui::Separator();
+
+            // content area - fake page header and paragraphs
+            ImGui::BeginChild("##browser_content", ImVec2(0, -36), true);
+            ImGui::Spacing();
+            ImGui::TextColored(ImVec4(0.9f,0.9f,0.2f,1.0f), "Example Page Title (Placeholder)");
+            ImGui::Spacing();
+            ImGui::TextWrapped("This is a fake browser view showing placeholder information. Below is the entire Bee Movie Script. Enjoy.", app2_address);
+            ImGui::Dummy(ImVec2(0,8));
+            ImGui::TextWrapped("%s", gist_content.empty() ? "Could not load bee_movie.txt" : gist_content.c_str());
+            ImGui::EndChild();
+
             ImGui::End();
         }
 
