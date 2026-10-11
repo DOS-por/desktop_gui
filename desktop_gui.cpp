@@ -1,3 +1,4 @@
+// IMGUI LIBRARIES: imgui, imgui_impl_glfw, imgui_impl_opengl3
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
@@ -7,6 +8,12 @@
 #include <GLES2/gl2.h>
 #endif
 #include <GLFW/glfw3.h>
+
+// TIME LIBRARIES
+#include <ctime>
+#include <iomanip>
+#include <sstream>
+using namespace std;
 
 static void glfw_error_callback(int error, const char* description)
 {
@@ -133,6 +140,23 @@ int main(int, char**)
         draw_list->AddConvexPolyFilled(outerLeftPoly, 4, IM_COL32(100, 200, 255, 255)); // Light Blue
         // ---------------------------------------------------------------------------------------------------
 		
+        // REAL TIME CLOCK DISPLAY -------------------------------------------------------
+
+        // Time formatting and Getting
+        time_t now = time(nullptr);
+		tm localTime_s;
+		localtime_s(&localTime_s, &now);    
+
+		char timeBuffer[9]; // HH:MM:SS
+		strftime(timeBuffer, sizeof(timeBuffer), "%H:%M:%S", &localTime_s);
+
+		// Displaying Real Time Clock on the desktop wallpaper
+		ImGui::SetWindowPos(ImVec2(display_w - 150.0f, 20.0f), ImGuiCond_Always);
+		ImGui::Begin("Real Time Clock", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove);
+		ImGui::Text("%s", timeBuffer);
+		ImGui::End();
+
+        //--------------------------------------------------------------------------------
 
         // Rendering
         ImGui::Render();
