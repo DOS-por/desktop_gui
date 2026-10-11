@@ -1,4 +1,4 @@
-// IMGUI LIBRARIES: imgui, imgui_impl_glfw, imgui_impl_opengl3
+﻿// IMGUI LIBRARIES: imgui, imgui_impl_glfw, imgui_impl_opengl3
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
@@ -162,6 +162,51 @@ int main(int, char**)
 
         //--------------------------------------------------------------------------------
 
+
+		//TASK BAR -----------------------------------------------------------------------
+		float taskBarHeight = 60.0f;
+		float taskBarY = (float)display_h - taskBarHeight;
+
+        //Task Bar container
+        draw_list->AddRectFilled(
+            ImVec2(0, taskBarY),
+            ImVec2((float)display_w, (float)display_h),
+            IM_COL32(0, 0, 0, 255) // Darker background for the taskbar
+		);
+
+		ImGui::SetNextWindowPos(ImVec2(0, taskBarY - 10), ImGuiCond_Always);
+		ImGui::SetNextWindowSize(ImVec2((float)display_w, taskBarHeight), ImGuiCond_Always);
+
+		ImGuiWindowFlags taskBarFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground;
+
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, IM_COL32(255, 255, 255, 255)); // Darker background for the taskbar
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f); // No rounding for the taskbar
+
+		ImGui::Begin("Task Bar", nullptr, taskBarFlags);
+
+        // Power Button
+		float buttonSize = 50.0f;
+		float right_margin = 20.0f;
+		float powerButtonX = (float)display_w - buttonSize - right_margin;
+
+		ImGui::SetCursorPosX(powerButtonX);
+
+        // Button Style for Power Button
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 100.0f); // Rounded corners
+		ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(200, 0, 0, 255)); // Red button
+
+        if(ImGui::Button("PWR", ImVec2(buttonSize, buttonSize))) {
+            // Handle power button click (e.g., exit the application)
+            glfwSetWindowShouldClose(window, GLFW_TRUE);
+		}
+
+		
+		ImGui::PopStyleColor(2);
+		ImGui::PopStyleVar(2);
+
+        ImGui::End();
+        // -------------------------------------------------------------------------------
+       
         // Rendering
         ImGui::Render();
         glfwGetFramebufferSize(window, &display_w, &display_h);
