@@ -75,6 +75,11 @@ int main(int, char**)
 #endif
     ImGui_ImplOpenGL3_Init(glsl_version);
 
+    // UI state for taskbar buttons/windows
+    static bool showApp1 = false;
+    static bool showApp2 = false;
+    static bool showTaskManager = false;
+
     // Main loop
 #ifdef __EMSCRIPTEN__
     io.IniFilename = nullptr;
@@ -164,7 +169,7 @@ int main(int, char**)
 
 
 		//TASK BAR -----------------------------------------------------------------------
-		float taskBarHeight = 60.0f;
+		float taskBarHeight = 65.0f;
 		float taskBarY = (float)display_h - taskBarHeight;
 
         //Task Bar container
@@ -174,7 +179,7 @@ int main(int, char**)
             IM_COL32(0, 0, 0, 255) // Darker background for the taskbar
 		);
 
-		ImGui::SetNextWindowPos(ImVec2(0, taskBarY - 10), ImGuiCond_Always);
+		ImGui::SetNextWindowPos(ImVec2(0, taskBarY), ImGuiCond_Always);
 		ImGui::SetNextWindowSize(ImVec2((float)display_w, taskBarHeight), ImGuiCond_Always);
 
 		ImGuiWindowFlags taskBarFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground;
@@ -184,12 +189,51 @@ int main(int, char**)
 
 		ImGui::Begin("Task Bar", nullptr, taskBarFlags);
 
+        // Left-side quick-launch buttons (3 buttons)
+        float quickButtonSize = 40.0f;
+        float left_margin = 20.0f;
+        float spacing = 10.0f;
+
+        // Button 1
+        ImGui::SetCursorPosX(left_margin);
+        ImGui::SetCursorPosY((taskBarHeight - quickButtonSize) * 0.5f);
+        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 8.0f);
+        ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(70, 130, 180, 255));
+        if (ImGui::Button("App 1", ImVec2(quickButtonSize, quickButtonSize))) {
+            showApp1 = true;
+        }
+        ImGui::PopStyleColor();
+        ImGui::PopStyleVar();
+
+        // Button 2
+        ImGui::SetCursorPosX(left_margin + (quickButtonSize + spacing) * 1);
+        ImGui::SetCursorPosY((taskBarHeight - quickButtonSize) * 0.5f);
+        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 8.0f);
+        ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(100, 180, 120, 255));
+        if (ImGui::Button("App 2", ImVec2(quickButtonSize, quickButtonSize))) {
+            showApp2 = true;
+        }
+        ImGui::PopStyleColor();
+        ImGui::PopStyleVar();
+
+        // Task Manager button (third)
+        ImGui::SetCursorPosX(left_margin + (quickButtonSize + spacing) * 2);
+        ImGui::SetCursorPosY((taskBarHeight - quickButtonSize) * 0.5f);
+        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 8.0f);
+        ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(120, 120, 220, 255));
+        if (ImGui::Button("TM", ImVec2(quickButtonSize, quickButtonSize))) {
+            showTaskManager = true;
+        }
+        ImGui::PopStyleColor();
+        ImGui::PopStyleVar();
+
         // Power Button
 		float buttonSize = 50.0f;
 		float right_margin = 20.0f;
 		float powerButtonX = (float)display_w - buttonSize - right_margin;
 
-		ImGui::SetCursorPosX(powerButtonX);
+        ImGui::SetCursorPosX(powerButtonX);
+        ImGui::SetCursorPosY((taskBarHeight - buttonSize) * 0.5f);
 
         // Button Style for Power Button
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 100.0f); // Rounded corners
@@ -206,7 +250,52 @@ int main(int, char**)
 
         ImGui::End();
         // -------------------------------------------------------------------------------
-       
+
+        // Floating windows opened from taskbar buttons
+        if (showApp1) {
+            ImGui::SetNextWindowSize(ImVec2(360, 200), ImGuiCond_Appearing);
+            ImGui::Begin("App 1 - Info", &showApp1, ImGuiWindowFlags_NoCollapse);
+            ImGui::TextWrapped("Placeholder information for App 1.");
+            ImGui::End();
+        }
+
+        if (showApp2) {
+            ImGui::SetNextWindowSize(ImVec2(360, 200), ImGuiCond_Appearing);
+            ImGui::Begin("App 2 - Info", &showApp2, ImGuiWindowFlags_NoCollapse);
+            ImGui::TextWrapped("Placeholder information for App 2.");
+            ImGui::End();
+        }
+
+        if (showTaskManager) {
+            ImGui::SetNextWindowSize(ImVec2(640, 360), ImGuiCond_Appearing);
+            ImGui::Begin("Task Manager", &showTaskManager, ImGuiWindowFlags_NoCollapse);
+            ImGui::Text("Processes");
+            ImGui::Separator();
+
+            ImGui::Columns(3, "proc_columns");
+            ImGui::SetColumnWidth(0, 320);
+            ImGui::Text("Process"); ImGui::NextColumn();
+            ImGui::Text("CPU %"); ImGui::NextColumn();
+            ImGui::Text("Memory"); ImGui::NextColumn();
+            ImGui::Separator();
+
+            const char* procs[][3] = {
+                {"explorer.exe", "1.2%", "45 MB"},
+                {"chrome.exe", "12.5%", "420 MB"},
+                {"code.exe", "5.1%", "300 MB"},
+                {"spotify.exe", "3.3%", "120 MB"}
+            };
+            for (int i = 0; i < 4; ++i) {
+                ImGui::TextUnformatted(procs[i][0]); ImGui::NextColumn();
+                ImGui::TextUnformatted(procs[i][1]); ImGui::NextColumn();
+                ImGui::TextUnformatted(procs[i][2]); ImGui::NextColumn();
+            }
+
+            ImGui::Columns(1);
+            ImGui::Separator();
+            ImGui::End();
+        }
+
         // Rendering
         ImGui::Render();
         glfwGetFramebufferSize(window, &display_w, &display_h);
