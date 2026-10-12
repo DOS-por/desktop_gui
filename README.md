@@ -52,9 +52,9 @@ This project requires Dear ImGui, GLFW, and standard Windows OpenGL libraries:
 ### Simple Functions in the Desktop GUI Mockup
 | Command | Arguments / Input | Description |
 | :--- | :--- | :--- |
-| **`desktop_workspace`** | *None* | Renders the background wallpaper along with the live date and real-time clock. |
-| **`taskbar`** | *None* | Renders the bottom panel containing application launcher shortcuts and power controls. |
-| **`sample_site_app`** | *None* | Opens a window displaying sample web page content. |
-| **`file_manager_app`** | *None* | Opens a dummy file explorer window listing sample directories and files. |
-| **`task_manager_app`** | *None* | Opens a dummy task manager window displaying simulated process, CPU, and memory metrics. |
-| **`power_off`** | *None* | Triggers application shutdown and closes the desktop GUI. |
+| **`desktop_workspace`** | *Mouse click* | Renders the background wallpaper along with the live date and real-time clock. |
+| **`taskbar`** | *Mouse click* | Renders the bottom panel containing application launcher shortcuts and power controls. |
+| **`sample_site_app`** | *Mouse click* | Opens a window displaying sample web page content. |
+| **`file_manager_app`** | *Mouse click* | Opens a dummy file explorer window listing sample directories and files. |
+| **`task_manager_app`** | *Mouse click* | Opens a dummy task manager window displaying simulated process, CPU, and memory metrics. |
+| **`power_off`** | *Mouse click* | Triggers application shutdown and closes the desktop GUI. |
