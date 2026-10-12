@@ -43,19 +43,18 @@ This project requires Dear ImGui, GLFW, and standard Windows OpenGL libraries:
    - Ensure your linker dependencies include `glfw3.lib` and the Windows OpenGL library (`opengl32.lib`).
 
 ## Instructions
-### How to Build and Run
 
-## Build & Run
+### Build & Run
 1. Open `desktop_gui.sln` in Visual Studio
 2. Set your build configuration to **Debug / Release** and **x64**
 3. Build and run the solution.
 
-### Commands in the Custom Marquee
+### Simple Functions in the Desktop GUI Mockup
 | Command | Arguments / Input | Description |
 | :--- | :--- | :--- |
-| **`help`** | *None* | Displays all available commands and their descriptions. |
-| **`start_marquee`** | *None* | Starts the marquee animation. |
-| **`stop_marquee`** | *None* | Stops the marquee animation. |
-| **`set_text`** | `<string>` | Accepts a text input and displays it as a marquee. |
-| **`set_speed`** | `<int>` | Sets the marquee animation refresh delay in milliseconds. |
-| **`exit`** | *None* | Terminates the console application. |
+| **`desktop_workspace`** | *None* | Renders the background wallpaper along with the live date and real-time clock. |
+| **`taskbar`** | *None* | Renders the bottom panel containing application launcher shortcuts and power controls. |
+| **`sample_site_app`** | *None* | Opens a window displaying sample web page content. |
+| **`file_manager_app`** | *None* | Opens a dummy file explorer window listing sample directories and files. |
+| **`task_manager_app`** | *None* | Opens a dummy task manager window displaying simulated process, CPU, and memory metrics. |
+| **`power_off`** | *None* | Triggers application shutdown and closes the desktop GUI. |
