@@ -9,38 +9,46 @@
 ### Project Structure
 
 ```text
-my_console_project/
-├── main.cpp                        # Primary entry point (contains the main() function)
-├── README.md                       # Project documentation & setup instructions
-└── commands/                       # Folder containing command & animation logic
-    └── marquee.cpp                 # Implementation of marquee thread loop (start, set_text, set_speed, start_marquee, stop_marquee)
+desktop_gui/                      # Root project directory
+├── imgui/                        # Dear ImGui library folder
+├── x64/                          # Build output directory
+├── .gitattributes                # Git attributes configuration
+├── .gitignore                    # Git ignore configuration
+├── bee_movie_script.txt          # Text document asset
+├── desktop_gui.cpp               # Primary entry point & top-level GUI application
+├── desktop_gui.sln               # Visual Studio Solution file
+├── desktop_gui.vcxproj           # Visual Studio Project file
+├── desktop_gui.vcxproj.filters   # Visual Studio Project Filters file
+├── desktop_gui.vcxproj.user      # Per-User Project Options file
+├── imgui.ini                     # ImGui configuration settings
+└── README.md                     # Project documentation & setup instructions
 ```
 
-## Performance & Optimal Settings
-
-Text Speed value suggestions and observations on value changes:
-
-| Range | Delay ($ms$) | Performance & Visual Behavior |
-| :--- | :--- | :--- |
-| **Optimal** | `100 ms - 160 ms` | Smooth scrolling motion with crisp text legibility. |
-| **Too Fast** | `< 15 ms` | Motion blur makes text unreadable; causes terminal screen tearing. |
-| **Too Slow** | `> 300 ms` | Choppy, stuttered text movement. |
 
 ## Prerequisites
 * **C++ Compiler:** `g++` with C++11 (or higher) support.
 * **Operating System:** Windows (Command Prompt / PowerShell).
 
+## Dependancies
+This project requires Dear ImGui, GLFW, and standard Windows OpenGL libraries:
+
+1. **Dear ImGui Files:**
+   - Download or clone the repository from the official [Dear ImGui GitHub repository](https://github.com/ocornut/imgui).
+   - Ensure the core ImGui files (`imgui.h`, `imgui.cpp`, `imgui_draw.cpp`, `imgui_tables.cpp`, `imgui_widgets.cpp`) as well as the required backends (`imgui_impl_glfw.cpp`, `imgui_impl_glfw.h`, `imgui_impl_opengl3.cpp`, `imgui_impl_opengl3.h`) are included in your project structure (under the `imgui/` folder).
+2. **GLFW Pre-compiled Binaries:**
+   -Download the 64-bit Windows pre-compiled binaries from the [GLFW downloads page](https://www.glfw.org/download.html).
+   - Place the files so that the static library points to your local path:
+     `C:\Libraries\glfw\lib-vc2022\glfw3.lib`
+3. **Required Linker Libraries:**
+   - Ensure your linker dependencies include `glfw3.lib` and the Windows OpenGL library (`opengl32.lib`).
+
 ## Instructions
 ### How to Build and Run
 
-### Compilation Instructions
-
-1. Open your terminal in the root directory where `main.cpp` is located.
-2. Run the following command to compile `main.cpp` along with all implementation files inside the `commands/` folder:
-
-```cmd
-g++ main.cpp -o ConsoleApp.exe
-```
+## Build & Run
+1. Open `desktop_gui.sln` in Visual Studio
+2. Set your build configuration to **Debug / Release** and **x64**
+3. Build and run the solution.
 
 ### Commands in the Custom Marquee
 | Command | Arguments / Input | Description |
